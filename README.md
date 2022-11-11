@@ -1,31 +1,53 @@
----
-page_type: sample
-languages:
-  - python
-products:
-  - azure
-  - azure-redis-cache
-description: "This sample creates a multi-container application in an Azure Kubernetes Service (AKS) cluster."
----
+## :dart: Objetivo
+O Objetivo deste exemplo é praticar o Deploy de uma aplicação em um Azure Kubernetes Cluster (AKS) através de um arquivo de manifesto (.YAML). Além do exemplo original, foi adicionado o provisionamento de recursos no Provedor Azure usando o Terraform. 
+Conhecimento Adquiridos:
+- Azure Cloud Provider
+- Containers: Docker, Azure Container Registry (ACR);
+- Kubernetes: Azure Kubernetes Cluster (AKS); 
+- Terraform;
 
-# Azure Voting App
 
-This sample creates a multi-container application in an Azure Kubernetes Service (AKS) cluster. The application interface has been built using Python / Flask. The data component is using Redis.
+## :pushpin: Descrição
+Este exemplo cria uma imagem local da aplicação, utilizando o `docker-compose.yaml`, provisionamento automático de recursos Azure usando Terraform, em seguida a imagem local é enviada para cloud em um diretório privado (ACR) e a partir deste a imagem é consumida por um Azure Kubenertes Cluster. A interface do aplicativo foi construída usando Python / Flask. O componente de dados está usando o Redis.
 
-To walk through a quick deployment of this application, see the AKS [quick start](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough?WT.mc_id=none-github-nepeters).
 
-To walk through a complete experience where this code is packaged into container images, uploaded to Azure Container Registry, and then run in and AKS cluster, see the [AKS tutorials](https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-app?WT.mc_id=none-github-nepeters).
+## :computer: Como rodar a aplicação
+1. Realize o fork do projeto e em seguida no seu terminal git bash dê o comando `git clone` para copiar o repositório para sua máquina local.
+2. `docker-compose up -d` -> dar este comando no seu terminal do linux ou WSL2 no diretória da aplicação;
+3. `docker images` -> lista as imagens geradas
+4. `docker ps` -> -> lista os containers criados
+5. http://localhost:8080 -> testa a aplicaçao local
+6. `docker-compose down` -> destroi os containers
+7. `az login` -> faz o login no Azure CLI usando o powershell
+8. `terraform init` -> inicializa o terraform
+9. `terraform fmt` -> formato os arquivos .tf
+10. `terraform plan -out tfplan` -> verifica as mudanças antes de dar o apply
+11. `terraform apply tfplan` -> aplica o plano para criação dos recursos
+12. `az acr login --name <ACRname_created>`
+13. `docker tag mcr.microsoft.com/azuredocs/azure-vote-front:v1  <ACRname_created>.azurecr.io/azure-vote-front:v1`
+14. `docker push <ACRname_created>.azurecr.io/azure-vote-front:v1` -> envia a imagem para o ACR
+15. `az aks get-credentials --resource-group <ResourceGroupName> --name <AKSClusterName>` -> pega as credenciais do Cluster AKS
+16. `kubectl get nodes` -> lista os nós em execução
+17. Atualiza para o novo endereço da imagem na linha 60  do manifesto `azure-vote-all-in-one-redis.yaml`
+18. `kubectl apply -f azure-vote-all-in-one-redis.yaml` -> Aplica o manifesto no Kubenertes 
+19. `kubectl get services` -> lista os serviços em execução, acessar a aplicação usando o IP Externo no seu browser
+20. `terraform destroy` -> Deleta os recursos criados
 
-## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+## :triangular_flag_on_post: Pré-Requisitos
+- VS Code v1.72.2
+- WSL2 para Windows
+- [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
+- Terraform v1.3.2
+- provider registry.terraform.io/hashicorp/azurerm v3.30.0
+- Kubectl v4.5.7
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+## :link: Links/Referência
+- [Terraform Docs](https://registry.terraform.io/providers/hashicorp/azurerm/3.31.0)
+- [AKS tutorials](https://docs.microsoft.com/pt-br/azure/aks/tutorial-kubernetes-prepare-app?WT.mc_id=none-github-nepeters)
+
+### :bookmark: Notas
+- Foi add um recurso "role_acrpull" em `main.tf` para que o Kubernertes Cluster possa consumir a imagem enviado para o repositório ACR; Sem este recurso, a aplicação não executa.
+- Add `depends_on` em alguns recursos dependentes devido apresentar falha durante o provisionamento `terraform apply` 
+
