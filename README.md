@@ -52,6 +52,6 @@ Este exemplo cria uma imagem local da aplicação, utilizando o `docker-compose.
 - [AKS tutorials](https://docs.microsoft.com/pt-br/azure/aks/tutorial-kubernetes-prepare-app?WT.mc_id=none-github-nepeters)
 
 ### :bookmark: Notas
-- Foi add um recurso "role_acrpull" em `main.tf` para que o Kubernertes Cluster possa consumir a imagem enviado para o repositório ACR; Sem este recurso, a aplicação não executa.
+- Foi add um recurso "role_acrpull" em `main.tf` para criar uma atribuição de função para autorizar o cluster do AKS a se conectar ao Registro de Contêiner do Azure. Sem este recurso, a aplicação não executa.
 - Add `depends_on` em alguns recursos dependentes devido apresentar falha durante o provisionamento `terraform apply` 
 
