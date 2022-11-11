@@ -8,7 +8,11 @@ Conhecimento Adquiridos:
 
 
 ## :pushpin: Descrição
+![Arquitetura Proposta](https://user-images.githubusercontent.com/97552106/201381199-7559a25d-5f4f-4910-bd09-4af14d56e9d2.png)
+
+
 Este exemplo cria uma imagem local da aplicação, utilizando o `docker-compose.yaml`, provisionamento automático de recursos Azure usando Terraform, em seguida a imagem local é enviada para cloud em um diretório privado (ACR) e a partir deste a imagem é consumida por um Azure Kubenertes Cluster. A interface do aplicativo foi construída usando Python / Flask. O componente de dados está usando o Redis.
+
 
 
 ## :computer: Como rodar a aplicação
